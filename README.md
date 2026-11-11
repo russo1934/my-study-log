@@ -1,12 +1,12 @@
 # 学習ログ
 
-HTML/CSS/JavaScriptとlocalStorageだけで動く、小さな学習ログアプリです。
+このリポジトリは、GitHub Pagesで公開している学習ログアプリです。HTML/CSS/JavaScriptだけで動き、記録は利用中のブラウザのlocalStorageに保存されます。
 
 日付ごとに「今日の調子・集中度」と「今日の学習メモ」を保存できます。数学の復習、英単語の学習、読書メモなどを記録して、これまでの学習を見返せます。保存した記録はブラウザのlocalStorageに残ります。
 
-## 📱 デモ
+## 📱 公開ページ
 
-🔗 [https://gigaschool.github.io/tiny-diary/](https://gigaschool.github.io/tiny-diary/)
+🔗 [学習ログを開く](https://russo1934.github.io/my-study-log/)
 
 ![📷 image.png](image.png)
 
@@ -97,4 +97,4 @@ tiny-diary/
 
 ## ライセンス
 
-MIT License
+このアプリはMIT Licenseで公開しています。ライセンスの詳細は [LICENSE](LICENSE) をご確認ください。
