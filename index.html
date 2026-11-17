@@ -124,6 +124,23 @@
 
         <ul id="entry-list" class="entry-list" aria-label="保存した学習記録一覧"></ul>
       </section>
+
+      <section class="status-panel" aria-labelledby="status-title">
+        <div class="history-header status-header">
+          <div>
+            <p class="eyebrow">HUMAN PARAMETERS</p>
+            <h2 id="status-title">人間パラメータ</h2>
+          </div>
+          <p class="status-scale">各項目を0〜100で表示</p>
+        </div>
+
+        <div class="status-content">
+          <div id="status-chart" class="status-chart"></div>
+          <dl id="status-values" class="status-values" aria-label="人間パラメータの数値"></dl>
+        </div>
+
+        <p class="status-description">日々の行動に応じたステータス加算機能は今後追加予定です。</p>
+      </section>
     </main>
 
     <script src="app.js"></script>

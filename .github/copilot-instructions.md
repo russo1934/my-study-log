@@ -27,7 +27,7 @@ The app is intentionally simple and centered in three files:
 - `styles.css`: layout, theme, responsive UI, and chart styling
 - `app.js`: all application logic, rendering, storage, and user interactions
 
-The app is a single-page experience with no backend. State is kept in browser `localStorage` under the key `tiny-diary.entries.v1`. `manifest.webmanifest` describes the installable app; `sw.js` precaches the static shell for offline use. The install button uses the browser's `beforeinstallprompt` event when available and falls back to browser-menu instructions. Bump `CACHE_NAME` in `sw.js` when changing the precached app shell. Service Workers require HTTPS or localhost, so opening `index.html` with `file://` does not enable PWA installation or offline caching.
+The app is a single-page experience with no backend. Study entries are kept in browser `localStorage` under `tiny-diary.entries.v1`; human parameter values are read from `tiny-diary.parameters.v1`. `statusAttributes` in `app.js` defines the five parameter keys and labels; values are clamped to 0–100 and default to zero. `manifest.webmanifest` describes the installable app; `sw.js` precaches the static shell for offline use. The install button uses the browser's `beforeinstallprompt` event when available and falls back to browser-menu instructions. Bump `CACHE_NAME` in `sw.js` when changing the precached app shell. Service Workers require HTTPS or localhost, so opening `index.html` with `file://` does not enable PWA installation or offline caching.
 
 The core runtime flow is:
 
@@ -36,6 +36,7 @@ The core runtime flow is:
 3. The app upserts one record per date (`date` acts as the identity key).
 4. The UI re-renders the list, summary chips, and recent 7-day rhythm chart.
 5. Filter/search controls apply client-side filtering without server requests.
+6. The human-parameter panel renders its fixed set of five attributes as an SVG radar chart.
 
 ## Key conventions in this codebase
 

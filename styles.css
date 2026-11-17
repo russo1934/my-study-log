@@ -50,7 +50,8 @@ button {
 }
 
 .editor-panel,
-.history-panel {
+.history-panel,
+.status-panel {
   min-width: 0;
   border: 1px solid rgba(229, 221, 208, 0.9);
   border-radius: 8px;
@@ -59,13 +60,21 @@ button {
 }
 
 .editor-panel {
-  position: sticky;
-  top: 24px;
+  grid-column: 1;
+  grid-row: 1;
   align-self: start;
   padding: 26px;
 }
 
 .history-panel {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 24px;
+}
+
+.status-panel {
+  grid-column: 1 / -1;
+  grid-row: 2;
   padding: 24px;
 }
 
@@ -84,6 +93,98 @@ button {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.status-scale {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.status-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.7fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.status-chart {
+  width: min(100%, 480px);
+  margin: 0 auto;
+}
+
+.status-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.parameter-grid polygon,
+.parameter-grid line {
+  fill: none;
+  stroke: rgba(118, 113, 107, 0.28);
+  stroke-width: 1.2;
+}
+
+.parameter-area {
+  fill: rgba(244, 127, 162, 0.24);
+  stroke: var(--pink-dark);
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.parameter-point {
+  fill: var(--pink-dark);
+}
+
+.parameter-label {
+  fill: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  dominant-baseline: middle;
+}
+
+.parameter-ticks {
+  fill: var(--muted);
+  font-size: 9px;
+}
+
+.status-values {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.status-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffefb;
+}
+
+.status-value dt {
+  font-weight: 800;
+}
+
+.status-value dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+.status-value dd strong {
+  color: var(--pink-dark);
+  font-size: 1.2rem;
+}
+
+.status-description {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .eyebrow {
@@ -506,6 +607,13 @@ textarea:focus {
     padding: 12px 0 24px;
   }
 
+  .editor-panel,
+  .history-panel,
+  .status-panel {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
   .editor-panel {
     position: static;
   }
@@ -519,7 +627,8 @@ textarea:focus {
   }
 
   .editor-panel,
-  .history-panel {
+  .history-panel,
+  .status-panel {
     padding: 12px;
   }
 
@@ -529,6 +638,11 @@ textarea:focus {
     flex-direction: column;
     gap: 6px;
     margin-bottom: 10px;
+  }
+
+  .status-content {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   h1 {

@@ -1,4 +1,6 @@
 const STORAGE_KEY = "tiny-diary.entries.v1";
+const STATUS_STORAGE_KEY = "tiny-diary.parameters.v1";
+const STATUS_MAX = 100;
 
 const moods = {
   happy: {
@@ -28,10 +30,20 @@ const moods = {
   },
 };
 
+const statusAttributes = [
+  { key: "knowledge", label: "知識" },
+  { key: "courage", label: "度胸" },
+  { key: "dexterity", label: "器用さ" },
+  { key: "kindness", label: "優しさ" },
+  { key: "charm", label: "魅力" },
+];
+
 const form = document.querySelector("#diary-form");
 const dateInput = document.querySelector("#entry-date");
 const noteInput = document.querySelector("#entry-note");
 const installButton = document.querySelector("#install-button");
+const statusChart = document.querySelector("#status-chart");
+const statusValuesList = document.querySelector("#status-values");
 const clearButton = document.querySelector("#clear-button");
 const entryList = document.querySelector("#entry-list");
 const emptyState = document.querySelector("#empty-state");
@@ -47,6 +59,7 @@ const biorhythmMessage = document.querySelector("#biorhythm-message");
 const biorhythmDetail = document.querySelector("#biorhythm-detail");
 
 let entries = loadEntries();
+let statusValues = loadStatusValues();
 let installPrompt = null;
 
 function loadEntries() {
@@ -66,6 +79,37 @@ function loadEntries() {
 
 function saveEntries() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function loadStatusValues() {
+  const rawValues = localStorage.getItem(STATUS_STORAGE_KEY);
+  const initialValues = Object.fromEntries(statusAttributes.map(({ key }) => [key, 0]));
+
+  if (!rawValues) {
+    return initialValues;
+  }
+
+  try {
+    const parsedValues = JSON.parse(rawValues);
+
+    if (!parsedValues || typeof parsedValues !== "object" || Array.isArray(parsedValues)) {
+      return initialValues;
+    }
+
+    return Object.fromEntries(
+      statusAttributes.map(({ key }) => {
+        const value = parsedValues[key];
+        const normalizedValue =
+          typeof value === "number" && Number.isFinite(value)
+            ? Math.min(STATUS_MAX, Math.max(0, Math.round(value)))
+            : 0;
+
+        return [key, normalizedValue];
+      }),
+    );
+  } catch {
+    return initialValues;
+  }
 }
 
 function getTodayIso() {
@@ -195,6 +239,87 @@ function renderSummary() {
       const count = entries.filter((entry) => entry.mood === moodKey).length;
       return `<span class="summary-chip">${mood.face} ${mood.label} ${count}</span>`;
     })
+    .join("");
+}
+
+function renderStatus() {
+  const centerX = 210;
+  const centerY = 180;
+  const radius = 112;
+  const labelRadius = 158;
+  const angleFor = (index) => -Math.PI / 2 + (index * 2 * Math.PI) / statusAttributes.length;
+  const pointFor = (index, pointRadius) => ({
+    x: centerX + Math.cos(angleFor(index)) * pointRadius,
+    y: centerY + Math.sin(angleFor(index)) * pointRadius,
+  });
+  const pointsToString = (points) =>
+    points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+  const gridLevels = [20, 40, 60, 80, 100];
+  const chartPoints = statusAttributes.map(({ key }, index) =>
+    pointFor(index, (radius * statusValues[key]) / STATUS_MAX),
+  );
+
+  statusChart.innerHTML = `
+    <svg class="status-svg" viewBox="0 0 420 360" role="img" aria-labelledby="status-chart-title">
+      <title id="status-chart-title">5項目の人間パラメータ、各0〜100</title>
+      <g class="parameter-grid" aria-hidden="true">
+        ${gridLevels
+          .map((level) => {
+            const points = statusAttributes.map((_, index) =>
+              pointFor(index, (radius * level) / STATUS_MAX),
+            );
+            return `<polygon points="${pointsToString(points)}"></polygon>`;
+          })
+          .join("")}
+        ${statusAttributes
+          .map((_, index) => {
+            const point = pointFor(index, radius);
+            return `<line x1="${centerX}" y1="${centerY}" x2="${point.x.toFixed(
+              1,
+            )}" y2="${point.y.toFixed(1)}"></line>`;
+          })
+          .join("")}
+      </g>
+      <g class="parameter-ticks" aria-hidden="true">
+        ${gridLevels
+          .map(
+            (level) =>
+              `<text x="${centerX + 6}" y="${(centerY - (radius * level) / STATUS_MAX).toFixed(
+                1,
+              )}">${level}</text>`,
+          )
+          .join("")}
+      </g>
+      <polygon class="parameter-area" points="${pointsToString(chartPoints)}"></polygon>
+      ${chartPoints
+        .map(
+          (point) =>
+            `<circle class="parameter-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(
+              1,
+            )}" r="4"></circle>`,
+        )
+        .join("")}
+      ${statusAttributes
+        .map((attribute, index) => {
+          const point = pointFor(index, labelRadius);
+          const anchor = point.x < centerX - 10 ? "end" : point.x > centerX + 10 ? "start" : "middle";
+          return `<text class="parameter-label" x="${point.x.toFixed(1)}" y="${point.y.toFixed(
+            1,
+          )}" text-anchor="${anchor}">${attribute.label}</text>`;
+        })
+        .join("")}
+    </svg>
+  `;
+
+  statusValuesList.innerHTML = statusAttributes
+    .map(
+      ({ key, label }) => `
+        <div class="status-value">
+          <dt>${label}</dt>
+          <dd><strong>${statusValues[key]}</strong><span> / ${STATUS_MAX}</span></dd>
+        </div>
+      `,
+    )
     .join("");
 }
 
@@ -373,6 +498,7 @@ function getBiorhythmMessage(trend, average, entryLength) {
 function render() {
   sortEntries();
   renderSummary();
+  renderStatus();
   renderBiorhythm();
   renderEntries();
 }
