@@ -10,9 +10,19 @@ HTML/CSS/JavaScriptとlocalStorageだけで動く、小さな学習ログアプ�
 
 ![📷 image.png](image.png)
 
-## デモの動かし方
+## 動かし方
 
-`index.html` をブラウザで開くだけで使えます。ビルドやサーバー起動は不要です。
+通常のブラウザ利用は `index.html` を直接開くだけで使えます。ビルドは不要です。
+
+PWAとしてインストールするには、Service Workerが利用できる安全な接続（HTTPSまたはlocalhost）が必要です。ローカルでは次のコマンドで起動し、表示されたページを対応ブラウザで開いてください。
+
+```bash
+python3 -m http.server 8000
+```
+
+`http://localhost:8000` を開き、ブラウザのインストール操作（アドレスバーのインストールアイコン、またはメニューの「アプリをインストール」など）を使います。インストール後はアプリのファイル一式をService Workerがキャッシュするため、オフラインでも利用できます。GitHub PagesのHTTPSデモからもインストールできます。
+
+記録は引き続きそのブラウザの `localStorage` に保存されます。保存先は接続元（localhostとGitHub Pagesなど）とブラウザごとに異なり、別の端末とは同期されません。
 
 ```text
 tiny-diary/
@@ -43,6 +53,7 @@ tiny-diary/
 - CSS
 - JavaScript
 - localStorage
+- PWA (Web App Manifest, Service Worker)
 
 外部ライブラリは使っていません。
 
