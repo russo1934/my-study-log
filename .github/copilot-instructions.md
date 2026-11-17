@@ -27,7 +27,7 @@ The app is intentionally simple and centered in three files:
 - `styles.css`: layout, theme, responsive UI, and chart styling
 - `app.js`: all application logic, rendering, storage, and user interactions
 
-The app is a single-page experience with no backend. State is kept in browser `localStorage` under the key `tiny-diary.entries.v1`. `manifest.webmanifest` describes the installable app; `sw.js` precaches the static shell for offline use. Bump `CACHE_NAME` in `sw.js` when changing the precached app shell. Service Workers require HTTPS or localhost, so opening `index.html` with `file://` does not enable PWA installation or offline caching.
+The app is a single-page experience with no backend. State is kept in browser `localStorage` under the key `tiny-diary.entries.v1`. `manifest.webmanifest` describes the installable app; `sw.js` precaches the static shell for offline use. The install button uses the browser's `beforeinstallprompt` event when available and falls back to browser-menu instructions. Bump `CACHE_NAME` in `sw.js` when changing the precached app shell. Service Workers require HTTPS or localhost, so opening `index.html` with `file://` does not enable PWA installation or offline caching.
 
 The core runtime flow is:
 

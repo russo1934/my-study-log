@@ -31,6 +31,7 @@ const moods = {
 const form = document.querySelector("#diary-form");
 const dateInput = document.querySelector("#entry-date");
 const noteInput = document.querySelector("#entry-note");
+const installButton = document.querySelector("#install-button");
 const clearButton = document.querySelector("#clear-button");
 const entryList = document.querySelector("#entry-list");
 const emptyState = document.querySelector("#empty-state");
@@ -46,6 +47,7 @@ const biorhythmMessage = document.querySelector("#biorhythm-message");
 const biorhythmDetail = document.querySelector("#biorhythm-detail");
 
 let entries = loadEntries();
+let installPrompt = null;
 
 function loadEntries() {
   const rawEntries = localStorage.getItem(STORAGE_KEY);
@@ -508,6 +510,37 @@ entryList.addEventListener("click", (event) => {
 
 searchInput.addEventListener("input", renderEntries);
 moodFilter.addEventListener("change", renderEntries);
+
+installButton.addEventListener("click", async () => {
+  if (!installPrompt) {
+    alert(
+      "このブラウザでは直接インストールできません。ブラウザのメニューから「アプリをインストール」または「ホーム画面に追加」を選んでください。",
+    );
+    return;
+  }
+
+  const prompt = installPrompt;
+  installPrompt = null;
+  await prompt.prompt();
+  const { outcome } = await prompt.userChoice;
+
+  if (outcome === "accepted") {
+    installButton.hidden = true;
+  } else {
+    installButton.textContent = "インストール方法";
+  }
+});
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  installButton.textContent = "アプリをインストール";
+});
+
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  installButton.hidden = true;
+});
 
 dateInput.value = getTodayIso();
 updateCharCount();
